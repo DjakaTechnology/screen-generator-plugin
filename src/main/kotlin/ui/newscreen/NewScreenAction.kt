@@ -13,6 +13,6 @@ class NewScreenAction : AnAction() {
             val module = ModuleUtil.findModuleForFile(it, event.project!!)?.name ?: ""
             CurrentPath(it.path, it.isDirectory, module)
         }
-        NewScreenDialog(event.project!!, currentPath).show()
+        NewScreenDialog(currentPath).show()
     }
 }

@@ -6,13 +6,16 @@ import data.file.PackageExtractor
 import data.file.WriteActionDispatcher
 import data.repository.ModuleRepository
 import model.AndroidComponent
+import javax.inject.Inject
 
-class NewScreenPresenter(private val view: NewScreenView,
-                         private val fileCreator: FileCreator,
-                         private val packageExtractor: PackageExtractor,
-                         private val writeActionDispatcher: WriteActionDispatcher,
-                         private val moduleRepository: ModuleRepository,
-                         private val currentPath: CurrentPath?) {
+class NewScreenPresenter @Inject constructor(
+    private val view: NewScreenView,
+    private val fileCreator: FileCreator,
+    private val packageExtractor: PackageExtractor,
+    private val writeActionDispatcher: WriteActionDispatcher,
+    private val moduleRepository: ModuleRepository,
+    private val currentPath: CurrentPath?
+) {
 
     fun onLoadView() {
         view.showPackage(packageExtractor.extractFromCurrentPath())

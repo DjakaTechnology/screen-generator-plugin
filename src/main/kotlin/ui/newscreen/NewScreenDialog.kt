@@ -1,37 +1,31 @@
 package ui.newscreen
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import data.file.*
-import data.repository.ModuleRepositoryImpl
-import data.repository.SettingsRepositoryImpl
-import data.repository.SourceRootRepositoryImpl
+import data.file.CurrentPath
+import di.Injector
 import model.AndroidComponent
+import javax.inject.Inject
 import javax.swing.JComponent
 
-class NewScreenDialog(project: Project, currentPath: CurrentPath?) : DialogWrapper(true), NewScreenView {
+class NewScreenDialog(currentPath: CurrentPath?) : DialogWrapper(true), NewScreenView {
 
     private val panel = NewScreenPanel()
 
-    private val presenter: NewScreenPresenter
+    @Inject
+    lateinit var presenter: NewScreenPresenter
 
     init {
-        val projectStructure = ProjectStructureImpl(project)
-        val sourceRootRepository = SourceRootRepositoryImpl(projectStructure)
-        val fileCreator = FileCreatorImpl(SettingsRepositoryImpl(project), sourceRootRepository)
-        val packageExtractor = PackageExtractorImpl(currentPath, sourceRootRepository)
-        val writeActionDispatcher = WriteActionDispatcherImpl()
-        val moduleRepository = ModuleRepositoryImpl(projectStructure)
-        presenter = NewScreenPresenter(this, fileCreator, packageExtractor, writeActionDispatcher, moduleRepository, currentPath)
+        Injector.component.newScreenFactory().create(this, currentPath).inject(this)
         init()
     }
 
     override fun doOKAction() =
-            presenter.onOkClick(
-                    panel.packageTextField.text,
-                    panel.nameTextField.text,
-                    AndroidComponent.values()[panel.androidComponentComboBox.selectedIndex],
-                    panel.moduleComboBox.selectedItem as String)
+        presenter.onOkClick(
+            panel.packageTextField.text,
+            panel.nameTextField.text,
+            AndroidComponent.values()[panel.androidComponentComboBox.selectedIndex],
+            panel.moduleComboBox.selectedItem as String
+        )
 
     override fun createCenterPanel(): JComponent {
         presenter.onLoadView()

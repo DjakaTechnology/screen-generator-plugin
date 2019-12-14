@@ -30,6 +30,7 @@
                 instance="ui.settings.SettingsViewImpl">
         </projectConfigurable>
         <projectService serviceInterface="data.ScreenGeneratorComponent" serviceImplementation="data.ScreenGeneratorComponent"/>
+        <postStartupActivity implementation="ScreenGeneratorStartupActivity" />
     </extensions>
 
     <actions>
