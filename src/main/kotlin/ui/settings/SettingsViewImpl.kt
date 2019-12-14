@@ -1,21 +1,25 @@
 package ui.settings
 
 import com.intellij.openapi.options.Configurable
-import com.intellij.openapi.project.Project
 import com.intellij.ui.LanguageTextField
-import data.repository.SettingsRepositoryImpl
+import di.Injector
 import model.FileType
 import model.ScreenElement
 import ui.help.HelpDialog
 import util.addTextChangeListener
 import java.awt.event.ActionListener
+import javax.inject.Inject
 import javax.swing.JComponent
 import javax.swing.event.DocumentListener
 
-class SettingsViewImpl(private val project: Project) : Configurable, SettingsView {
+class SettingsViewImpl : Configurable, SettingsView {
 
-    private var panel: SettingsPanel? = null
-    private val presenter = SettingsPresenter(this, SettingsRepositoryImpl(project))
+    @Inject
+    lateinit var presenter: SettingsPresenter
+
+    @Inject
+    lateinit var panel: SettingsPanel
+
     private var nameDocumentListener: DocumentListener? = null
     private var templateDocumentListener: com.intellij.openapi.editor.event.DocumentListener? = null
     private var activityDocumentListener: DocumentListener? = null
@@ -31,6 +35,10 @@ class SettingsViewImpl(private val project: Project) : Configurable, SettingsVie
     private var currentTemplateTextField: LanguageTextField? = null
     private var currentSampleTextField: LanguageTextField? = null
 
+    init {
+        Injector.component.settingsFactory().create(this).inject(this)
+    }
+
     override fun isModified() = presenter.isModified
 
     override fun getDisplayName() = "Screen Generator Plugin"
@@ -40,7 +48,6 @@ class SettingsViewImpl(private val project: Project) : Configurable, SettingsVie
     override fun reset() = presenter.onResetSettings()
 
     override fun createComponent(): JComponent? {
-        panel = SettingsPanel(project)
         presenter.onLoadView()
         onPanel {
             create(presenter::onHelpClick)
@@ -142,14 +149,16 @@ class SettingsViewImpl(private val project: Project) : Configurable, SettingsVie
         templateDocumentListener?.let { currentTemplateTextField?.document?.removeDocumentListener(it) }
         currentTemplateTextField = codePanel.kotlinTemplateTextField
         currentSampleTextField = codePanel.kotlinSampleTextField
-        if (addListener) templateDocumentListener = currentTemplateTextField?.addTextChangeListener(presenter::onTemplateChange)
+        if (addListener) templateDocumentListener =
+            currentTemplateTextField?.addTextChangeListener(presenter::onTemplateChange)
     }
 
     override fun swapToXmlTemplateListener(addListener: Boolean) = onPanel {
         templateDocumentListener?.let { currentTemplateTextField?.document?.removeDocumentListener(it) }
         currentTemplateTextField = codePanel.xmlTemplateTextField
         currentSampleTextField = codePanel.xmlSampleTextField
-        if (addListener) templateDocumentListener = currentTemplateTextField?.addTextChangeListener(presenter::onTemplateChange)
+        if (addListener) templateDocumentListener =
+            currentTemplateTextField?.addTextChangeListener(presenter::onTemplateChange)
     }
 
     override fun showFileNameTemplate(text: String) = onPanel {
@@ -162,7 +171,8 @@ class SettingsViewImpl(private val project: Project) : Configurable, SettingsVie
 
     override fun showHelp() = HelpDialog().show()
 
-    override fun setScreenElementDetailsEnabled(isEnabled: Boolean) = onPanel { setScreenElementDetailsEnabled(isEnabled) }
+    override fun setScreenElementDetailsEnabled(isEnabled: Boolean) =
+        onPanel { setScreenElementDetailsEnabled(isEnabled) }
 
-    private inline fun onPanel(function: SettingsPanel.() -> Unit) = panel?.run { function() } ?: Unit
+    private inline fun onPanel(function: SettingsPanel.() -> Unit) = panel.run { function() }
 }

@@ -5,13 +5,16 @@ import model.FileType
 import model.ScreenElement
 import model.Settings
 import util.swap
+import javax.inject.Inject
 
 const val SAMPLE_SCREEN_NAME = "Sample"
 const val SAMPLE_PACKAGE_NAME = "com.sample"
 const val SAMPLE_ANDROID_COMPONENT = "Activity"
 
-class SettingsPresenter(private val view: SettingsView,
-                        private val settingsRepository: SettingsRepository) {
+class SettingsPresenter @Inject constructor(
+    private val view: SettingsView,
+    private val settingsRepository: SettingsRepository
+) {
 
     val screenElements = mutableListOf<ScreenElement>()
     var currentSelectedScreenElement: ScreenElement? = null
@@ -88,7 +91,12 @@ class SettingsPresenter(private val view: SettingsView,
     }
 
     private fun updateSampleFileName(screenElement: ScreenElement) {
-        val fileName = screenElement.fileName(SAMPLE_SCREEN_NAME, SAMPLE_PACKAGE_NAME, SAMPLE_ANDROID_COMPONENT, currentActivityBaseClass)
+        val fileName = screenElement.fileName(
+            SAMPLE_SCREEN_NAME,
+            SAMPLE_PACKAGE_NAME,
+            SAMPLE_ANDROID_COMPONENT,
+            currentActivityBaseClass
+        )
         val fileExtension = screenElement.fileType.extension
         view.showFileNameSample("$fileName.$fileExtension")
     }
@@ -132,7 +140,14 @@ class SettingsPresenter(private val view: SettingsView,
     }
 
     private fun updateSampleCode(screenElement: ScreenElement) =
-            view.showSampleCode(screenElement.body(SAMPLE_SCREEN_NAME, SAMPLE_PACKAGE_NAME, SAMPLE_ANDROID_COMPONENT, currentActivityBaseClass))
+        view.showSampleCode(
+            screenElement.body(
+                SAMPLE_SCREEN_NAME,
+                SAMPLE_PACKAGE_NAME,
+                SAMPLE_ANDROID_COMPONENT,
+                currentActivityBaseClass
+            )
+        )
 
     fun onActivityBaseClassChange(text: String) {
         currentActivityBaseClass = text

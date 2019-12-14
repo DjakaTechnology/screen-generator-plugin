@@ -10,12 +10,13 @@ import com.intellij.ui.components.JBList
 import model.FileType
 import model.ScreenElement
 import java.awt.*
+import javax.inject.Inject
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 import javax.swing.ListSelectionModel
 
-class SettingsPanel(project: Project) : JPanel() {
+class SettingsPanel @Inject constructor(project: Project) : JPanel() {
 
     val nameTextField = JTextField()
 
@@ -114,10 +115,10 @@ class SettingsPanel(project: Project) : JPanel() {
     }
 
     private fun createSplitterRightPanel(androidComponentsPanel: JPanel, screenElementDetailsPanel: JPanel) =
-            JPanel(GridLayout(0, 1)).apply {
-                add(androidComponentsPanel)
-                add(screenElementDetailsPanel)
-            }
+        JPanel(GridLayout(0, 1)).apply {
+            add(androidComponentsPanel)
+            add(screenElementDetailsPanel)
+        }
 
     private fun addCodePanel(onHelpClick: () -> Unit) {
         codePanel.create(onHelpClick)
