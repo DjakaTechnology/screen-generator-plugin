@@ -1,6 +1,7 @@
 package ui.settings
 
 import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.project.Project
 import com.intellij.ui.LanguageTextField
 import di.Injector
 import model.FileType
@@ -12,7 +13,7 @@ import javax.inject.Inject
 import javax.swing.JComponent
 import javax.swing.event.DocumentListener
 
-class SettingsViewImpl : Configurable, SettingsView {
+class SettingsViewImpl(project: Project) : Configurable, SettingsView {
 
     @Inject
     lateinit var presenter: SettingsPresenter
@@ -36,6 +37,7 @@ class SettingsViewImpl : Configurable, SettingsView {
     private var currentSampleTextField: LanguageTextField? = null
 
     init {
+        Injector.init(project)
         Injector.component.settingsFactory().create(this).inject(this)
     }
 

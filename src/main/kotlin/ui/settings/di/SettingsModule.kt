@@ -1,7 +1,9 @@
-package ui.settings
+package ui.settings.di
 
 import dagger.Binds
 import dagger.Module
+import ui.settings.SettingsView
+import ui.settings.SettingsViewImpl
 
 @Module
 interface SettingsModule {

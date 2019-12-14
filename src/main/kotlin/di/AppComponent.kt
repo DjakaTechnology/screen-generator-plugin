@@ -3,8 +3,8 @@ package di
 import com.intellij.openapi.project.Project
 import dagger.BindsInstance
 import dagger.Component
-import ui.newscreen.NewScreenComponent
-import ui.settings.SettingsComponent
+import ui.newscreen.di.NewScreenComponent
+import ui.settings.di.SettingsComponent
 
 @Component(modules = [AppModule::class])
 interface AppComponent {

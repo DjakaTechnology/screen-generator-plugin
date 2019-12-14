@@ -1,4 +1,4 @@
-package ui.newscreen
+package ui.newscreen.di
 
 import dagger.Binds
 import dagger.Module
@@ -7,6 +7,8 @@ import data.repository.ModuleRepository
 import data.repository.ModuleRepositoryImpl
 import data.repository.SourceRootRepository
 import data.repository.SourceRootRepositoryImpl
+import ui.newscreen.NewScreenDialog
+import ui.newscreen.NewScreenView
 
 @Module
 interface NewScreenModule {
