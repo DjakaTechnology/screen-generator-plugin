@@ -39,7 +39,7 @@ class ScreenElementTest {
     fun `when file type is kotlin on file name`() {
         assertEquals(
                 "TestPresenter",
-                kotlinScreenElement.fileName("Test", "com.test", "Activity", "com.example.AppCompatActivity")
+                kotlinScreenElement.fileName("Test", "com.test")
         )
     }
 
@@ -47,7 +47,7 @@ class ScreenElementTest {
     fun `when file type is xml on file name`() {
         assertEquals(
                 "activity_test",
-                xmlScreenElement.fileName("Test", "com.test", "Activity", "com.example.AppCompatActivity")
+                xmlScreenElement.fileName("Test", "com.test")
         )
     }
 

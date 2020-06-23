@@ -8,7 +8,6 @@ import data.file.FileCreator
 import data.file.PackageExtractor
 import data.file.WriteActionDispatcher
 import data.repository.ModuleRepository
-import model.AndroidComponent
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

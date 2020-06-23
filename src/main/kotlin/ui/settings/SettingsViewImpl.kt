@@ -20,8 +20,6 @@ class SettingsViewImpl(private val project: Project) : Configurable, SettingsVie
     private var categoryNameDocumentListener: DocumentListener? = null
     private var screenElementNameDocumentListener: DocumentListener? = null
     private var templateDocumentListener: com.intellij.openapi.editor.event.DocumentListener? = null
-    private var activityDocumentListener: DocumentListener? = null
-    private var fragmentDocumentListener: DocumentListener? = null
     private var fileNameDocumentListener: DocumentListener? = null
 
     private val fileTypeActionListener: ActionListener = ActionListener {
@@ -149,26 +147,6 @@ class SettingsViewImpl(private val project: Project) : Configurable, SettingsVie
 
     override fun showTemplate(template: String) {
         currentTemplateTextField?.text = template
-    }
-
-    override fun showActivityBaseClass(text: String) = onPanel {
-        activityTextField.text = text
-    }
-
-    override fun showFragmentBaseClass(text: String) = onPanel {
-        fragmentTextField.text = text
-    }
-
-    override fun addBaseClassTextChangeListeners() = onPanel {
-        activityDocumentListener = activityTextField.addTextChangeListener(presenter::onActivityBaseClassChange)
-        fragmentDocumentListener = fragmentTextField.addTextChangeListener(presenter::onFragmentBaseClassChange)
-    }
-
-    override fun removeBaseClassTextChangeListeners() = onPanel {
-        activityDocumentListener?.let { activityTextField.document.removeDocumentListener(it) }
-        activityDocumentListener = null
-        fragmentDocumentListener?.let { fragmentTextField.document.removeDocumentListener(it) }
-        fragmentDocumentListener = null
     }
 
     override fun showFileType(fileType: FileType) = onPanel {

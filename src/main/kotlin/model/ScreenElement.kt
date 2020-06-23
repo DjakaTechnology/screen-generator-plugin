@@ -12,27 +12,23 @@ data class ScreenElement(var name: String = "",
 
     override fun toString() = name
 
-    fun body(screenName: String, packageName: String, androidComponent: String, androidComponentBaseClass: String) =
-            template.replaceVariables(screenName, packageName, androidComponent, androidComponentBaseClass)
+    fun body(screenName: String, packageName: String) =
+            template.replaceVariables(screenName, packageName)
 
-    fun fileName(screenName: String, packageName: String, androidComponent: String, androidComponentBaseClass: String) =
-            fileNameTemplate.replaceVariables(screenName, packageName, androidComponent, androidComponentBaseClass).run {
+    fun fileName(screenName: String, packageName: String) =
+            fileNameTemplate.replaceVariables(screenName, packageName).run {
                 if (fileType == FileType.LAYOUT_XML)
                     toLowerCase()
                 else
                     this
             }
 
-    private fun String.replaceVariables(screenName: String, packageName: String, androidComponent: String, androidComponentBaseClass: String) =
+    private fun String.replaceVariables(screenName: String, packageName: String) =
             replace(Variable.NAME.value, screenName)
                     .replace(Variable.NAME_SNAKE_CASE.value, screenName.toSnakeCase())
                     .replace(Variable.NAME_LOWER_CASE.value, screenName.decapitalize())
                     .replace(Variable.SCREEN_ELEMENT.value, name)
                     .replace(Variable.PACKAGE_NAME.value, packageName)
-                    .replace(Variable.ANDROID_COMPONENT_NAME.value, androidComponent)
-                    .replace(Variable.ANDROID_COMPONENT_NAME_LOWER_CASE.value, androidComponent.decapitalize())
-                    .replace(Variable.ANDROID_COMPONENT_FULL_CLASS_NAME.value, androidComponentBaseClass)
-                    .replace(Variable.ANDROID_COMPONENT_CLASS_NAME.value, androidComponentBaseClass.substring(androidComponentBaseClass.lastIndexOf(".") + 1))
 
     companion object {
         fun getDefault() = ScreenElement(UNNAMED_ELEMENT, FileType.KOTLIN.defaultTemplate, FileType.KOTLIN, FileType.KOTLIN.defaultFileName)

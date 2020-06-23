@@ -9,7 +9,6 @@ import util.swap
 
 const val SAMPLE_SCREEN_NAME = "Sample"
 const val SAMPLE_PACKAGE_NAME = "com.sample"
-const val SAMPLE_ANDROID_COMPONENT = "Activity"
 
 class SettingsPresenter(
         private val view: SettingsView,
@@ -22,8 +21,6 @@ class SettingsPresenter(
     var currentSelectedScreenElement: ScreenElement? = null
     var isModified = false
     lateinit var initialSettings: Settings
-    lateinit var currentActivityBaseClass: String
-    lateinit var currentFragmentBaseClass: String
 
     fun onLoadView() {
         initialSettings = settingsRepository.loadSettings()
@@ -37,10 +34,6 @@ class SettingsPresenter(
             view.showCategoryName(it.name)
             view.showScreenElements(it.screenElements)
         }
-
-        view.showActivityBaseClass(currentActivityBaseClass)
-        view.showFragmentBaseClass(currentFragmentBaseClass)
-        view.addBaseClassTextChangeListeners()
     }
 
     fun onViewCreated() = view.setScreenElementDetailsEnabled(false)
@@ -49,8 +42,6 @@ class SettingsPresenter(
         categories.clear()
         initialSettings.categories.mapTo(categories) { it.copy() }
         currentSelectedCategory = initialSettings.currentlySelectedCategory.copy()
-        currentActivityBaseClass = initialSettings.activityBaseClass
-        currentFragmentBaseClass = initialSettings.fragmentBaseClass
     }
 
     fun onCategoryAddClick() {
@@ -164,13 +155,13 @@ class SettingsPresenter(
     }
 
     private fun updateSampleFileName(screenElement: ScreenElement) {
-        val fileName = screenElement.fileName(SAMPLE_SCREEN_NAME, SAMPLE_PACKAGE_NAME, SAMPLE_ANDROID_COMPONENT, currentActivityBaseClass)
+        val fileName = screenElement.fileName(SAMPLE_SCREEN_NAME, SAMPLE_PACKAGE_NAME)
         val fileExtension = screenElement.fileType.extension
         view.showFileNameSample("$fileName.$fileExtension")
     }
 
     fun onApplySettings() {
-        initialSettings = Settings(categories.toMutableList(), categories[0], currentActivityBaseClass, currentFragmentBaseClass)
+        initialSettings = Settings(categories.toMutableList(), categories[0])
         resetToInitialSettings()
         settingsRepository.update(initialSettings)
         isModified = false
@@ -184,10 +175,6 @@ class SettingsPresenter(
         currentSelectedCategory?.let {
             view.showScreenElements(it.screenElements)
         }
-        view.removeBaseClassTextChangeListeners()
-        view.showActivityBaseClass(currentActivityBaseClass)
-        view.showFragmentBaseClass(currentFragmentBaseClass)
-        view.addBaseClassTextChangeListeners()
         isModified = false
     }
 
@@ -214,25 +201,7 @@ class SettingsPresenter(
     }
 
     private fun updateSampleCode(screenElement: ScreenElement) =
-            view.showSampleCode(screenElement.body(SAMPLE_SCREEN_NAME, SAMPLE_PACKAGE_NAME, SAMPLE_ANDROID_COMPONENT, currentActivityBaseClass))
-
-    fun onActivityBaseClassChange(text: String) {
-        currentActivityBaseClass = text
-        currentSelectedScreenElement?.let {
-            updateSampleCode(it)
-            updateSampleFileName(it)
-        }
-        isModified = true
-    }
-
-    fun onFragmentBaseClassChange(text: String) {
-        currentFragmentBaseClass = text
-        currentSelectedScreenElement?.let {
-            updateSampleCode(it)
-            updateSampleFileName(it)
-        }
-        isModified = true
-    }
+            view.showSampleCode(screenElement.body(SAMPLE_SCREEN_NAME, SAMPLE_PACKAGE_NAME))
 
     fun onFileTypeSelect(fileType: FileType) {
         currentSelectedScreenElement?.let {

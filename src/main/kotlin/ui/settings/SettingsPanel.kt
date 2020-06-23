@@ -34,9 +34,6 @@ class SettingsPanel(project: Project) : JPanel() {
     }
     val screenElementToolbarDecorator: ToolbarDecorator = ToolbarDecorator.createDecorator(screenElementsList)
 
-    val activityTextField = JTextField()
-    val fragmentTextField = JTextField()
-
     val fileTypeComboBox = ComboBox<FileType>(FileType.values())
     val fileNameTextField = JTextField()
     val fileNameSampleLabel = JLabel().apply { isEnabled = false }
@@ -54,11 +51,9 @@ class SettingsPanel(project: Project) : JPanel() {
 
     fun create(onHelpClick: () -> Unit) {
         val screenElementsPanel = createScreenElementsPanel()
-        val androidComponentsPanel = createAndroidComponentsPanel()
         screenElementDetailsPanel = createScreenElementDetailsPanel()
 
-        val rightPanel = createSplitterRightPanel(androidComponentsPanel, screenElementDetailsPanel)
-        add(createVerticalSplitter(createCategoriesPanel(), createSplitter(screenElementsPanel, rightPanel)), BorderLayout.PAGE_START)
+        add(createVerticalSplitter(createCategoriesPanel(), createSplitter(screenElementsPanel, screenElementDetailsPanel)), BorderLayout.PAGE_START)
         addCodePanel(onHelpClick)
     }
 
@@ -82,15 +77,6 @@ class SettingsPanel(project: Project) : JPanel() {
         border = IdeBorderFactory.createTitledBorder("Screen Elements", false)
         layout = GridLayout(1, 1)
         add(screenElementToolbarDecorator.createPanel())
-    }
-
-    private fun createAndroidComponentsPanel() = JPanel().apply {
-        border = IdeBorderFactory.createTitledBorder("Android Components", false)
-        layout = GridBagLayout()
-        add(JLabel("Activity Base Class:"), constraintsLeft(0, 0))
-        add(activityTextField, constraintsRight(1, 0))
-        add(JLabel("Fragment Base Class:"), constraintsLeft(0, 1))
-        add(fragmentTextField, constraintsRight(1, 1))
     }
 
     private fun createScreenElementDetailsPanel() = JPanel().apply {
@@ -140,12 +126,6 @@ class SettingsPanel(project: Project) : JPanel() {
             JBSplitter(0.2f).apply {
                 firstComponent = leftPanel
                 secondComponent = rightPanel
-            }
-
-    private fun createSplitterRightPanel(androidComponentsPanel: JPanel, screenElementDetailsPanel: JPanel) =
-            JPanel(GridLayout(0, 1)).apply {
-                add(androidComponentsPanel)
-                add(screenElementDetailsPanel)
             }
 
     private fun addCodePanel(onHelpClick: () -> Unit) {
