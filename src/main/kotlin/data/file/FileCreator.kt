@@ -25,47 +25,47 @@ class FileCreatorImpl(
             androidComponent: AndroidComponent,
             module: String
     ) {
-        val codeSubdirectory = findCodeSubdirectory(packageName, module)
-        val resourcesSubdirectory = findResourcesSubdirectory(module)
-        if (codeSubdirectory != null) {
-            settingsRepository.loadSettings().apply {
-                val baseClass = getAndroidComponentBaseClass(androidComponent)
-                category.screenElements.forEach {
-                    if (it.fileType == FileType.LAYOUT_XML) {
+        settingsRepository.loadSettings().apply {
+            val baseClass = getAndroidComponentBaseClass(androidComponent)
+            category.screenElements.forEach {
+                if (it.fileType == FileType.LAYOUT_XML) {
+                    val resourcesSubdirectory = findResourcesSubdirectory(module)
+                    val file = File(
+                            it.fileName(screenName, packageName, androidComponent.displayName, baseClass),
+                            it.body(screenName, packageName, androidComponent.displayName, baseClass),
+                            it.fileType
+                    )
+                    resourcesSubdirectory.addFile(file)
+                } else {
+                    val codeSubdirectory = (if (it.fileType == FileType.KOTLIN) findCodeSubdirectory(packageName, module)
+                    else findTestSubdirectory(packageName, module)) ?: return
+
+                    val body = it.body(screenName, packageName, androidComponent.displayName, baseClass)
+                    val packageLine = body.lines()[0]
+                    val packageNameFromTemplate = packageLine.split(" ")[1]
+                    if (packageNameFromTemplate == packageName) {
                         val file = File(
                                 it.fileName(screenName, packageName, androidComponent.displayName, baseClass),
                                 it.body(screenName, packageName, androidComponent.displayName, baseClass),
                                 it.fileType
                         )
-                        resourcesSubdirectory.addFile(file)
+                        codeSubdirectory.addFile(file)
                     } else {
-                        val body = it.body(screenName, packageName, androidComponent.displayName, baseClass)
-                        val packageLine = body.lines()[0]
-                        val packageNameFromTemplate = packageLine.split(" ")[1]
-                        if (packageNameFromTemplate == packageName) {
+                        val innerCodeSubDirectory = findCodeSubdirectory(packageNameFromTemplate, module)
+                        innerCodeSubDirectory?.let { directory ->
+                            val file = File(
+                                    it.fileName(screenName, packageName, androidComponent.displayName, baseClass),
+                                    it.body(screenName, packageName, androidComponent.displayName, baseClass),
+                                    it.fileType
+                            )
+                            directory.addFile(file)
+                        } ?: kotlin.run {
                             val file = File(
                                     it.fileName(screenName, packageName, androidComponent.displayName, baseClass),
                                     it.body(screenName, packageName, androidComponent.displayName, baseClass),
                                     it.fileType
                             )
                             codeSubdirectory.addFile(file)
-                        } else {
-                            val innerCodeSubDirectory = findCodeSubdirectory(packageNameFromTemplate, module)
-                            innerCodeSubDirectory?.let { directory ->
-                                val file = File(
-                                        it.fileName(screenName, packageName, androidComponent.displayName, baseClass),
-                                        it.body(screenName, packageName, androidComponent.displayName, baseClass),
-                                        it.fileType
-                                )
-                                directory.addFile(file)
-                            } ?: kotlin.run {
-                                val file = File(
-                                        it.fileName(screenName, packageName, androidComponent.displayName, baseClass),
-                                        it.body(screenName, packageName, androidComponent.displayName, baseClass),
-                                        it.fileType
-                                )
-                                codeSubdirectory.addFile(file)
-                            }
                         }
                     }
                 }
@@ -75,12 +75,21 @@ class FileCreatorImpl(
 
     private fun findCodeSubdirectory(packageName: String, module: String): Directory? =
             sourceRootRepository.findCodeSourceRoot(module)?.run {
-                var subdirectory = directory
-                packageName.split(".").forEach {
-                    subdirectory = subdirectory.findSubdirectory(it) ?: subdirectory.createSubdirectory(it)
-                }
-                return subdirectory
+                return findOrCreateDirectory(directory, packageName)
             }
+
+    private fun findTestSubdirectory(packageName: String, module: String): Directory? =
+            sourceRootRepository.findTestCodeSourceRoot(module)?.run {
+                return findOrCreateDirectory(directory, packageName)
+            }
+
+    private fun findOrCreateDirectory(directory: Directory, packageName: String): Directory {
+        var subdirectory = directory
+        packageName.split(".").forEach {
+            subdirectory = subdirectory.findSubdirectory(it) ?: subdirectory.createSubdirectory(it)
+        }
+        return subdirectory
+    }
 
     private fun findResourcesSubdirectory(module: String) =
             sourceRootRepository.findResourcesSourceRoot(module).directory.run {

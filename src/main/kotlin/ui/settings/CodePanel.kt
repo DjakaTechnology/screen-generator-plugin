@@ -23,7 +23,8 @@ class CodePanel(private val project: Project) : JPanel() {
 
     private val textFieldsMap = mapOf(
             FileType.KOTLIN to listOf(kotlinTemplateTextField, kotlinSampleTextField),
-            FileType.LAYOUT_XML to listOf(xmlTemplateTextField, xmlSampleTextField)
+            FileType.LAYOUT_XML to listOf(xmlTemplateTextField, xmlSampleTextField),
+            FileType.KOTLIN_UNIT_TEST to listOf(kotlinTemplateTextField, kotlinSampleTextField)
     )
     private var currentFileType = FileType.KOTLIN
     private lateinit var templatePanel: JPanel

@@ -6,14 +6,10 @@ import java.util.*
 private const val UNNAMED_CATEGORY = "UnnamedCategory"
 
 data class Category(
-    var id: Int,
-    var name: String = "",
-    var screenElements: MutableList<ScreenElement>
+    var id: Int = Random().nextInt(),
+    var name: String = UNNAMED_CATEGORY,
+    var screenElements: MutableList<ScreenElement> = defaultScreenElements()
 ) : Serializable {
 
     override fun toString() = name
-
-    companion object {
-        fun getDefault() = Category(Random().nextInt(), UNNAMED_CATEGORY, defaultScreenElements())
-    }
 }

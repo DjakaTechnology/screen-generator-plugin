@@ -48,13 +48,13 @@ class SettingsPresenter(
     private fun resetToInitialSettings() {
         categories.clear()
         initialSettings.categories.mapTo(categories) { it.copy() }
-        currentSelectedCategory = initialSettings.currentlySelectedCategory
+        currentSelectedCategory = initialSettings.currentlySelectedCategory.copy()
         currentActivityBaseClass = initialSettings.activityBaseClass
         currentFragmentBaseClass = initialSettings.fragmentBaseClass
     }
 
     fun onCategoryAddClick() {
-        val newCategory = Category.getDefault()
+        val newCategory = Category()
         categories.add(newCategory)
         view.addCategory(newCategory)
         view.selectCategory(categories.size - 1)
@@ -247,7 +247,7 @@ class SettingsPresenter(
     private fun handleFileTypeSelection(screenElement: ScreenElement, addListener: Boolean) {
         view.showCodeTextFields(screenElement.fileType)
         when (screenElement.fileType) {
-            FileType.KOTLIN -> view.swapToKotlinTemplateListener(addListener)
+            FileType.KOTLIN, FileType.KOTLIN_UNIT_TEST -> view.swapToKotlinTemplateListener(addListener)
             FileType.LAYOUT_XML -> view.swapToXmlTemplateListener(addListener)
         }
         view.showFileNameTemplate(screenElement.fileNameTemplate)
