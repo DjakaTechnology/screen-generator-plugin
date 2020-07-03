@@ -5,6 +5,9 @@
     <idea-version since-build="182"/>
 
     <description><![CDATA[
+    Modified version of Screen Generator Plugin by Grzegorz Matyszczak. Feel free to @djaka.jaya via slack if you have any question/problem
+
+    ================================================================================================================================================
     This plugin helps you automate your everyday development by generating all necessary files for your project's architecture
     when you are creating a new screen.<br><br>
 
